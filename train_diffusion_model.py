@@ -205,11 +205,11 @@ for epoch in range(config['epochs']):
             ema_model.copy_to(unet.parameters())
             pipline = AudioDiffusionPipeline(vqvae=None, unet=unet, mel=mel, scheduler=noise_scheduler)
 
-        pipline.save_pretrained(output_dir)
-        repo.push_to_hub(
-            commit_message=f'Epoch {epoch}',
-            blocking=True,
-            auto_lfs_prune=True,
-        )
+            pipline.save_pretrained(output_dir)
+            repo.push_to_hub(
+                commit_message=f'Epoch {epoch}',
+                blocking=True,
+                auto_lfs_prune=True,
+            )
 
 accelerator.end_training()
