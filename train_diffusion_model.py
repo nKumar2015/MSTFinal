@@ -23,7 +23,7 @@ config = {
     'dataset': 'Nkumar5/RockMST', # Repo name of dataset on Huggingface Hub
     'hub_model_id':'NKumar5/CAGRock', # Repo name of model on Huggingface Hub
     'output_dir': 'results/RockMST',
-    'epochs': 1000, 
+    'epochs': 100, 
     'batch_size': 2, # Change according to available VRAM. 2 works best on 24GB VRAM
     'eval_batch_size': 2, # How many image to test on at once
     'grad_accumulation_steps': 8, # To increase effective batch // size see https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
