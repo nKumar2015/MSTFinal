@@ -2,7 +2,6 @@
 
 import os
 import pickle
-from pathlib import Path
 from typing import Optional
 
 import torch
@@ -12,13 +11,13 @@ from accelerate.logging import get_logger
 from datasets import load_dataset
 from diffusers import (DDPMScheduler, UNet2DConditionModel)
 from diffusers.optimization import get_scheduler
-from audiodiffusion.mel import Mel
+from Mel import Mel
 from diffusers import EMAModel
 from huggingface_hub import HfFolder, Repository, whoami
 from torchvision.transforms import Compose, Normalize, ToTensor
 from tqdm.auto import tqdm
 
-from audiodiffusion.pipeline_audio_diffusion import AudioDiffusionPipeline
+from audio_pipline import AudioDiffusionPipeline
 
 config = {
     'dataset': 'Nkumar5/RockMST', # Repo name of dataset on Huggingface Hub
@@ -27,7 +26,7 @@ config = {
     'epochs': 1000, 
     'batch_size': 2, # Change according to available VRAM. 2 works best on 24GB VRAM
     'eval_batch_size': 2, # How many image to test on at once
-    'grad_accumulation_steps': 8, # To increase effective batch size see https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
+    'grad_accumulation_steps': 8, # To increase effective batch // size see https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
     'learning_rate': 1e-4,
     'warmup_steps': 500,
     'mixed_precision': 'bf16', # 'bf16', 'fp16', or None
@@ -35,7 +34,6 @@ config = {
     'encodings': 'data/rock_encodings.p',
     'save_model_epochs': 10,
 }
-
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
