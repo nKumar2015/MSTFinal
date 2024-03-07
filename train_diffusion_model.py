@@ -11,7 +11,7 @@ from accelerate.logging import get_logger
 from datasets import load_dataset
 from diffusers import (DDPMScheduler, UNet2DConditionModel)
 from diffusers.optimization import get_scheduler
-from Mel import Mel
+from mel import Mel
 from diffusers import EMAModel
 from huggingface_hub import HfFolder, Repository, whoami
 from torchvision.transforms import Compose, Normalize, ToTensor

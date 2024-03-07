@@ -16,7 +16,7 @@ from diffusers import (
 from diffusers.utils import BaseOutput
 from PIL import Image
 
-from Mel import Mel
+from mel import Mel
 
 class AudioDiffusionPipeline(DiffusionPipeline):
 
