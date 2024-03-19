@@ -22,7 +22,7 @@ class AudioDiffusionPipeline(DiffusionPipeline):
 
   _optional_components = ["vqvae"]
 
-  def __init__(
+  def __init(
       self,
       vqvae: AutoencoderKL,
       unet: UNet2DConditionModel,
@@ -61,9 +61,8 @@ class AudioDiffusionPipeline(DiffusionPipeline):
     self.scheduler.set_timesteps(steps)
     step_generator = step_generator or generator
 
-    if type(self.unet.sample_size) == int:
-        self.unet.sample_size = (self.unet.sample_size, self.unet.sample_size)
-        
+    self.unet.sample.size = (self.unet.sample_size, self.unet.sample_size)
+
     if noise is None:
       noise = torch.randn(
         (
@@ -103,7 +102,7 @@ class AudioDiffusionPipeline(DiffusionPipeline):
       mask_end = int(mask_end_secs * pixels_per_sec)
       mask = self.scheduler.add_noise(input_images, noise, torch.tensor(self.scheduler.timesteps[start_step:]))
     
-    for step, t in enumerate(self.progress_bar(self.scheduler.timesteps[start_step:])):
+    for step, t in enumerate(self.progres_bar(self.scheduler.timesteps[start_step:])):
       if isinstance(self.unet, UNet2DConditionModel):
         unet_output = self.unet(images, t, encoding)['sample']
       else:
