@@ -20,19 +20,20 @@ from tqdm.auto import tqdm
 from audio_pipline import AudioDiffusionPipeline
 
 config = {
-    'dataset': 'Nkumar5/RockMST', # Repo name of dataset on Huggingface Hub
-    'hub_model_id':'NKumar5/CAGRock', # Repo name of model on Huggingface Hub
-    'output_dir': 'results/RockMST',
+    'dataset': 'Nkumar5/FMAFolk', # Repo name of dataset on Huggingface Hub
+    'hub_model_id':'NKumar5/CAGFolk', # Repo name of model on Huggingface Hub
+    'output_dir': 'results/FMAFolk',
     'epochs': 100, 
-    'batch_size': 2, # Change according to available VRAM. 2 works best on 24GB VRAM
+    'batch_size': 2, # Change according to available VRAM. 2 works best with 24GB VRAM
     'eval_batch_size': 2, # How many image to test on at once
     'grad_accumulation_steps': 8, # To increase effective batch // size see https://huggingface.co/docs/accelerate/usage_guides/gradient_accumulation
     'learning_rate': 1e-4,
     'warmup_steps': 500,
     'mixed_precision': 'bf16', # 'bf16', 'fp16', or None
     'push_to_hub': True, # Pushes model to huggingface hub. Must be logged into Huggingface CLI
-    'encodings': 'data/rock_encodings.p',
+    'encodings': 'data/encodings/Folk.p', # Path to encoding file for dataset
     'save_model_epochs': 10,
+    'from_pretrained': False
 }
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -80,26 +81,32 @@ train_dataloader = torch.utils.data.DataLoader(
 
 encodings = pickle.load(open(config['encodings'], 'rb'))
 
-unet = UNet2DConditionModel(
-    sample_size=resolution,
-    in_channels=1,
-    out_channels=1,
-    layers_per_block=2,
-    block_out_channels=(128, 256, 512, 512),
-    down_block_types=(
-        "CrossAttnDownBlock2D",
-        "CrossAttnDownBlock2D",
-        "CrossAttnDownBlock2D",
-        "DownBlock2D"
-    ),
-    up_block_types=(
-        "UpBlock2D",
-        "CrossAttnUpBlock2D",
-        "CrossAttnUpBlock2D",
-        "CrossAttnUpBlock2D",
-    ),
-    cross_attention_dim=list(encodings.values())[0].shape[-1]
-)
+if config['from_pretrained']:
+    pipeline = AudioDiffusionPipeline.from_pretrained(config['hub_model_id'], trust_remote_code=True)
+    mel = pipeline.mel
+    unet = pipeline.unet
+
+else:
+    unet = UNet2DConditionModel(
+        sample_size=resolution,
+        in_channels=1,
+        out_channels=1,
+        layers_per_block=2,
+        block_out_channels=(128, 256, 512, 512),
+        down_block_types=(
+            "CrossAttnDownBlock2D",
+            "CrossAttnDownBlock2D",
+            "CrossAttnDownBlock2D",
+            "DownBlock2D"
+        ),
+        up_block_types=(
+            "UpBlock2D",
+            "CrossAttnUpBlock2D",
+            "CrossAttnUpBlock2D",
+            "CrossAttnUpBlock2D",
+        ),
+        cross_attention_dim=list(encodings.values())[0].shape[-1]
+    )
 
 
 noise_scheduler = DDPMScheduler(num_train_timesteps=1000)

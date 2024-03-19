@@ -22,7 +22,7 @@ class AudioDiffusionPipeline(DiffusionPipeline):
 
   _optional_components = ["vqvae"]
 
-  def __init(
+  def __init__(
       self,
       vqvae: AutoencoderKL,
       unet: UNet2DConditionModel,
